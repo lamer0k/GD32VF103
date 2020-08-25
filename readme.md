@@ -1170,11 +1170,3 @@ int main()
 В общем как только мы разрешили прерывание машинного таймера и глобальное машинное прерывание. Через 1 мс срабатывает прерывание машинного таймера, которое вызывает программные таймеры, как только программные таймеры сработали они вызывают метод переключения ножки порта. 
 Все весь код не весит ничего 460 байт с оптимизацией и 650 без. 
 
-**Добавить про выход из прерывания, код выложить**
-
-https://www.susa.net/wordpress/2019/10/longan-nano-gd32vf103/
-https://visuale-ru.turbopages.org/s/visuale.ru/blog/sozdanie-protsessora-so-svobodnaya-arkhitekturoj-risc-v-chast-1
-
-
-https://indd.adobe.com/view/0f138698-6885-4905-bdd1-f198841d55f0
-https://www.youtube.com/watch?v=UPHEkz_rHTY
