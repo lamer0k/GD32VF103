@@ -1,0 +1,367 @@
+###############################################################################
+#
+# IAR ELF Linker V1.30.1.1067 for RISC-V                  25/Aug/2020  20:44:40
+# Copyright 2019-2020 IAR Systems AB.
+#
+#    Output file  =  C:\GitHub\RiscVLib\Debug\Exe\riscv.out
+#    Map file     =  C:\GitHub\RiscVLib\Debug\List\riscv.map
+#    Command line =
+#        -f C:\Users\Serge\AppData\Local\Temp\EW602A.tmp
+#        (C:\GitHub\RiscVLib\Debug\Obj\criticalsection.o
+#        C:\GitHub\RiscVLib\Debug\Obj\main.o --config_def CSTACK_SIZE=0x1000
+#        --config_def HEAP_SIZE=0x1000 --no_out_extension -o
+#        C:\GitHub\RiscVLib\Debug\Exe\riscv.out --map
+#        C:\GitHub\RiscVLib\Debug\List\riscv.map --config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench
+#        8.4\riscv\config\linker\GigaDevice\GD32VF103VBT6.icf" --entry
+#        __iar_program_start --debug_lib --vfe --text_out locale)
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+__CPP_Exceptions             = Disabled
+__SystemLibrary              = DLib
+__dlib_file_descriptor       = 0
+__dlib_full_locale_support   = 0
+__dlib_version               = 6
+__iar_optimize_for_size      = 1
+__iar_riscv_atomic           = *
+__iar_riscv_base_isa         = rv32i
+__iar_riscv_c_version        = 2.0
+__iar_riscv_compact          = 1
+__iar_riscv_div              = *
+__iar_riscv_extension_atomic = 1
+__iar_riscv_extension_div    = 1
+__iar_riscv_extension_mul    = 1
+__iar_riscv_fpu              = none
+__iar_riscv_i_version        = 2.0
+__iar_riscv_m_version        = 2.0
+__iar_riscv_mul              = 1
+__iar_riscv_xlen             = 32
+__machine_single__           = *
+__rt_version                 = 1
+
+
+*******************************************************************************
+*** HEAP SELECTION
+***
+
+The basic heap was selected because no calls to memory allocation
+functions were found in the application outside of system library
+functions, and there are calls to deallocation functions in the
+application.
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"CSTARTUP32":
+       place at start of [from 0x800'0000 to 0x801'ffff] {
+          ro section .alias.hwreset, ro section .cstartup };
+define block MVECTOR
+   with size = 96 * 4, alignment = 128 { ro section .mintvec };
+define block MINTERRUPTS
+   with maximum size = 64K { ro section .mtext, block MVECTOR };
+"ROM32":
+       place in [from 0x800'0000 to 0x801'ffff] { ro, block MINTERRUPTS };
+define block RW_DATA { rw data };
+define block HEAP with size = 4K, alignment = 16 { };
+define block CSTACK with size = 4K, alignment = 16 { };
+"RAM32":
+       place in [from 0x2000'0000 to 0x2000'7fff] {
+          block RW_DATA, block HEAP, block CSTACK };
+initialize by copy { rw };
+keep { symbol __iar_cstart_init_gp };
+keep { ro section .alias.hwreset };
+
+No sections matched the following patterns:
+
+  ro section .mintvec  in block MVECTOR
+
+
+  Section            Kind         Address    Size  Object
+  -------            ----         -------    ----  ------
+"CSTARTUP32":                                0x80
+  .alias.hwreset     ro code   0x800'0000    0x10  cstartup.o [4]
+  .cstartup          ro code   0x800'0010    0x38  cstartup.o [4]
+                             - 0x800'0048    0x48
+
+"ROM32":                                    0x6e6
+  MINTERRUPTS                  0x800'0080   0x1ca  <Block>
+    .mtext           ro code   0x800'0080    0x8c  main.o [1]
+    .mtext           ro code   0x800'0180    0x80  main.o [1]
+    .mtext           ro code   0x800'0200    0x4a  machine_default_handler.o [2]
+  .text              ro code   0x800'024a     0x6  main.o [1]
+  .text              ro code   0x800'0250     0x6  main.o [1]
+  .text              ro code   0x800'0256     0x6  main.o [1]
+  .text              ro code   0x800'025c    0x26  main.o [1]
+  .text              ro code   0x800'0282     0x2  main.o [1]
+  .text              ro code   0x800'0284     0x6  main.o [1]
+  .text              ro code   0x800'028a     0x6  main.o [1]
+  .text              ro code   0x800'0290     0x6  main.o [1]
+  .text              ro code   0x800'0296    0x26  main.o [1]
+  .text              ro code   0x800'02bc    0x12  __dbg_abort.o [3]
+  .rodata            const     0x800'02d0    0x30  main.o [1]
+  .text              ro code   0x800'0300     0xa  main.o [1]
+  .text              ro code   0x800'030a     0x2  main.o [1]
+  .rodata            const     0x800'030c   0x15c  main.o [1]
+  .text              ro code   0x800'0468     0xa  main.o [1]
+  .text              ro code   0x800'0472     0x2  __dbg_break.o [3]
+  .text              ro code   0x800'0474    0x12  __dbg_xxexit.o [3]
+  .text              ro code   0x800'0486    0x4e  main.o [1]
+  .text              ro code   0x800'04d4     0xc  criticalsection.o [1]
+  .text              ro code   0x800'04e0    0x12  main.o [1]
+  .text              ro code   0x800'04f2     0x6  main.o [1]
+  .text              ro code   0x800'04f8     0x6  main.o [1]
+  .text              ro code   0x800'04fe     0xc  main.o [1]
+  .text              ro code   0x800'050a     0x8  criticalsection.o [1]
+  .text              ro code   0x800'0512    0x18  main.o [1]
+  .text              ro code   0x800'052a     0xc  main.o [1]
+  .text              ro code   0x800'0536    0x18  main.o [1]
+  .text              ro code   0x800'054e    0x10  main.o [1]
+  .text              ro code   0x800'055e    0x16  main.o [1]
+  .text              ro code   0x800'0574    0x12  main.o [1]
+  .text              ro code   0x800'0586     0xe  main.o [1]
+  .text              ro code   0x800'0594     0x6  main.o [1]
+  .text              ro code   0x800'059a    0x18  main.o [1]
+  .text              ro code   0x800'05b2    0x18  main.o [1]
+  .text              ro code   0x800'05ca    0x18  main.o [1]
+  .text              ro code   0x800'05e2    0x24  main.o [1]
+  .text              ro code   0x800'0606    0x26  main.o [1]
+  .text              ro code   0x800'062c     0xc  main.o [1]
+  .text              ro code   0x800'0638    0x10  main.o [1]
+  .text              ro code   0x800'0648    0x18  main.o [1]
+  .text              ro code   0x800'0660    0x26  main.o [1]
+  .text              ro code   0x800'0686     0xc  main.o [1]
+  .text              ro code   0x800'0692    0x10  main.o [1]
+  .text              ro code   0x800'06a2    0x14  main.o [1]
+  .text              ro code   0x800'06b6    0x2e  data_init.o [4]
+  .text              ro code   0x800'06e4    0x1e  cexit.o [4]
+  .iar.init_table    const     0x800'0704    0x10  - Linker created -
+  .text              ro code   0x800'0714    0x12  main.o [1]
+  .text              ro code   0x800'0726     0xe  main.o [1]
+  .text              ro code   0x800'0734     0xa  main.o [1]
+  .text              ro code   0x800'073e    0x1c  copy_init.o [4]
+  .text              ro code   0x800'075a     0x2  exit.o [4]
+  Initializer bytes  const     0x800'075c     0x8  <for RW_DATA-1>
+  .text              ro code   0x800'0764     0x2  main.o [1]
+                             - 0x800'0766   0x6e6
+
+"RAM32", part 1 of 2:                         0x8
+  RW_DATA                     0x2000'0000     0x8  <Block>
+    RW_DATA-1                 0x2000'0000     0x8  <Init block>
+      .data          inited   0x2000'0000     0x4  main.o [1]
+      .data          inited   0x2000'0004     0x4  main.o [1]
+                            - 0x2000'0008     0x8
+
+"RAM32", part 2 of 2:                      0x1000
+  CSTACK                      0x2000'0010  0x1000  <Block>
+    CSTACK           uninit   0x2000'0010  0x1000  <Block tail>
+                            - 0x2000'1010  0x1000
+
+Unused ranges:
+
+         From           To      Size
+         ----           --      ----
+   0x800'0766   0x801'ffff  0x1'f89a
+  0x2000'0008  0x2000'000f       0x8
+  0x2000'1010  0x2000'7fff    0x6ff0
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address      Size
+          -------      ----
+Copy (__iar_copy_init2)
+    1 source range, total size 0x8:
+           0x800'075c   0x8
+    1 destination range, total size 0x8:
+          0x2000'0000   0x8
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                     ro code  ro data  rw data
+    ------                     -------  -------  -------
+command line/config:
+    ----------------------------------------------------
+    Total:
+
+C:\GitHub\RiscVLib\Debug\Obj: [1]
+    criticalsection.o               20
+    main.o                         988      404        8
+    ----------------------------------------------------
+    Total:                       1'008      404        8
+
+ccrv32imcn.a: [2]
+    machine_default_handler.o       74
+    ----------------------------------------------------
+    Total:                          74
+
+dbgrv32imcn.a: [3]
+    __dbg_abort.o                   18
+    __dbg_break.o                    2
+    __dbg_xxexit.o                  18
+    ----------------------------------------------------
+    Total:                          38
+
+dlrv32imcn.a: [4]
+    cexit.o                         30
+    copy_init.o                     28
+    cstartup.o                      72
+    data_init.o                     46
+    exit.o                           2
+    ----------------------------------------------------
+    Total:                         178
+
+    Gaps                           116        4
+    Linker created                           16    4'096
+--------------------------------------------------------
+    Grand Total:                 1'414      424    4'104
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                       Address   Size  Type      Object
+-----                       -------   ----  ----      ------
+.iar.init_table$$Base    0x800'0704          --   Gb  - Linker created -
+.iar.init_table$$Limit   0x800'0714          --   Gb  - Linker created -
+CSTACK$$Base            0x2000'0010          --   Gb  - Linker created -
+CSTACK$$Limit           0x2000'1010          --   Gb  - Linker created -
+CriticalSection::CriticalSection()
+                         0x800'04d4    0xc  Code  Gb  criticalsection.o [1]
+CriticalSection::~CriticalSection()
+                         0x800'050a    0x8  Code  Gb  criticalsection.o [1]
+DummyModule::HandleInterrupt()
+                         0x800'0282    0x2  Code  Gb  main.o [1]
+DummyPin<GPIOB, (unsigned int)6>::Toggle()
+                         0x800'0638   0x16  Code  Gb  main.o [1]
+DummyPin<GPIOC, (unsigned int)7>::Toggle()
+                         0x800'0692   0x16  Code  Gb  main.o [1]
+EnvironmentCall::HandleInterrupt()
+                         0x800'030a    0x2  Code  Gb  main.o [1]
+ExceptionVectorTable     0x800'02d0   0x30  Data  Gb  main.o [1]
+InterruptVectorTable     0x800'030c  0x15c  Data  Gb  main.o [1]
+Leds<DummyPin<GPIOB, (unsigned int)6>>::OnTimeout()
+                         0x800'062c   0x12  Code  Gb  main.o [1]
+Leds<DummyPin<GPIOC, (unsigned int)7>>::OnTimeout()
+                         0x800'0686   0x12  Code  Gb  main.o [1]
+MINTERRUPTS$$Base        0x800'0080          --   Gb  - Linker created -
+MINTERRUPTS$$Limit       0x800'021a          --   Gb  - Linker created -
+NonVectoredInt::ExceptionEntry()
+                         0x800'0080   0xbc  Code  Gb  main.o [1]
+NonVectoredInt::HandleException(unsigned int)
+                         0x800'025c   0x2c  Code  Gb  main.o [1]
+NonVectoredInt::HandleInterrupt(unsigned int)
+                         0x800'0296   0x2c  Code  Gb  main.o [1]
+NonVectoredInt::IrqEntry()
+                         0x800'0180   0xaa  Code  Gb  main.o [1]
+RW_DATA$$Base           0x2000'0000          --   Gb  - Linker created -
+RW_DATA$$Limit          0x2000'0008          --   Gb  - Linker created -
+Region$$Table$$Base      0x800'0704          --   Gb  - Linker created -
+Region$$Table$$Limit     0x800'0714          --   Gb  - Linker created -
+SoftwareTimer<(unsigned int)2000, (unsigned int)100, Leds<DummyPin<GPIOC, (unsigned int)7>>>::OnTick()
+                         0x800'0660   0x3c  Code  Gb  main.o [1]
+SoftwareTimer<(unsigned int)2000, (unsigned int)100, Leds<DummyPin<GPIOC, (unsigned int)7>>>::ticksRemain
+                        0x2000'0000    0x4  Data  Gb  main.o [1]
+SoftwareTimer<(unsigned int)2000, (unsigned int)200, Leds<DummyPin<GPIOB, (unsigned int)6>>>::OnTick()
+                         0x800'0606   0x3c  Code  Gb  main.o [1]
+SoftwareTimer<(unsigned int)2000, (unsigned int)200, Leds<DummyPin<GPIOB, (unsigned int)6>>>::ticksRemain
+                        0x2000'0004    0x4  Data  Gb  main.o [1]
+SystemTimer::HandleInterrupt()
+                         0x800'0714   0x1e  Code  Gb  main.o [1]
+TimerService<SoftwareTimer<(unsigned int)2000, (unsigned int)100, Leds<DummyPin<GPIOC, (unsigned int)7>>>, SoftwareTimer<(unsigned int)2000, (unsigned int)200, Leds<DummyPin<GPIOB, (unsigned int)6>>>>::OnSystemTick()
+                         0x800'0726   0x1a  Code  Gb  main.o [1]
+__DebugBreak             0x800'0472    0x2  Code  Gb  __dbg_break.o [3]
+__alias_hw_reset         0x800'0000         Code  Gb  cstartup.o [4]
+__exit                   0x800'0474   0x18  Code  Gb  __dbg_xxexit.o [3]
+__iar_copy_init2         0x800'073e   0x1c  Code  Gb  copy_init.o [4]
+__iar_data_init2         0x800'06b6   0x2e  Code  Gb  data_init.o [4]
+__iar_default_minterrupt_handler
+                         0x800'0200   0x50  Code  Gb  machine_default_handler.o [2]
+__iar_program_start      0x800'0010         Code  Gb  cstartup.o [4]
+__iar_static_base$$GPREL
+                        0x2000'0004          --   Gb  - Linker created -
+__low_level_init         0x800'0486   0xba  Code  Gb  main.o [1]
+_exit                    0x800'06e4         Code  Gb  cexit.o [4]
+abort                    0x800'02bc   0x1e  Code  Gb  __dbg_abort.o [3]
+exit                     0x800'075a    0x8  Code  Gb  exit.o [4]
+main                     0x800'0764    0x2  Code  Gb  main.o [1]
+std::array<void (*)(), (unsigned int)12>::operator [](unsigned int) const
+                         0x800'0300    0xa  Code  Gb  main.o [1]
+std::array<void (*)(), (unsigned int)87>::operator [](unsigned int) const
+                         0x800'0468    0xa  Code  Gb  main.o [1]
+unsigned int CoreRegisterBase<(unsigned int)1988, (unsigned int)32, ReadWriteMode>::Get<ReadWriteMode, void>()
+                         0x800'0256    0x6  Code  Gb  main.o [1]
+unsigned int CoreRegisterBase<(unsigned int)833, (unsigned int)32, ReadWriteMode>::Get<ReadWriteMode, void>()
+                         0x800'0250    0x6  Code  Gb  main.o [1]
+unsigned int CoreRegisterBase<(unsigned int)834, (unsigned int)32, ReadWriteMode>::Get<ReadWriteMode, void>()
+                         0x800'024a    0x6  Code  Gb  main.o [1]
+void CoreFieldValueBase<CSR_MMISC_CTL_NMI_CAUSE_FFF_Values<CSRCUSTOM::MMISC_CTL, (unsigned int)9, (unsigned int)1, ReadWriteMode, CSRCUSTOM::MMISC_CTLBase>, CSRCUSTOM::MMISC_CTLBase, (unsigned int)1>::Set<ReadWriteMode, void>()
+                         0x800'04e0   0x12  Code  Gb  main.o [1]
+void CoreRegister<(unsigned int)768, (unsigned int)32, ReadWriteMode, CSR::MSTATUSBase, CoreFieldValue<CSR_MCAUSE_MPIE_Values<CSR::MSTATUS, (unsigned int)3, (unsigned int)1, ReadMode, CSR::MSTATUSBase>, CSR::MSTATUSBase, (unsigned int)1>>::SetValueBits<ReadWriteMode, void>()
+                         0x800'0594    0x6  Code  Gb  main.o [1]
+void CoreRegister<(unsigned int)800, (unsigned int)32, ReadWriteMode, CSRCUSTOM::MCOUNTINHIBITBase, CoreFieldValue<CSR_MCOUNTINHIBIT_IR_Values<CSRCUSTOM::MCOUNTINHIBIT, (unsigned int)2, (unsigned int)1, ReadWriteMode, CSRCUSTOM::MCOUNTINHIBITBase>, CSRCUSTOM::MCOUNTINHIBITBase, (unsigned int)0>, CoreFieldValue<CSR_MCOUNTINHIBIT_CY_Values<CSRCUSTOM::MCOUNTINHIBIT, (unsigned int)0, (unsigned int)1, ReadWriteMode, CSRCUSTOM::MCOUNTINHIBITBase>, CSRCUSTOM::MCOUNTINHIBITBase, (unsigned int)0>>::Set<ReadWriteMode, void>()
+                         0x800'04fe    0xc  Code  Gb  main.o [1]
+void CoreRegisterBase<(unsigned int)1988, (unsigned int)32, ReadWriteMode>::Write<ReadWriteMode, void>(unsigned int)
+                         0x800'0290    0x6  Code  Gb  main.o [1]
+void CoreRegisterBase<(unsigned int)2028, (unsigned int)32, ReadWriteMode>::Write<ReadWriteMode, void>(unsigned int)
+                         0x800'04f2    0x6  Code  Gb  main.o [1]
+void CoreRegisterBase<(unsigned int)773, (unsigned int)32, ReadWriteMode>::Write<ReadWriteMode, void>(unsigned int)
+                         0x800'04f8    0x6  Code  Gb  main.o [1]
+void CoreRegisterBase<(unsigned int)833, (unsigned int)32, ReadWriteMode>::Write<ReadWriteMode, void>(unsigned int)
+                         0x800'028a    0x6  Code  Gb  main.o [1]
+void CoreRegisterBase<(unsigned int)834, (unsigned int)32, ReadWriteMode>::Write<ReadWriteMode, void>(unsigned int)
+                         0x800'0284    0x6  Code  Gb  main.o [1]
+void FieldValueBase<ECLIC_CLICCFG_NLBITS_Values<ECLIC::CLICCFG, (unsigned int)1, (unsigned int)4, ReadWriteMode, ECLIC::ECLICCLICCFGBase>, ECLIC::ECLICCLICCFGBase, (unsigned char)3>::Set<ReadWriteMode, void>()
+                         0x800'0512   0x18  Code  Gb  main.o [1]
+void FieldValueBase<ECLIC_CLICINTATTR_0_SHV_Values<ECLIC::CLICINTATTR_7, (unsigned int)0, (unsigned int)1, ReadWriteMode, ECLIC::ECLICCLICINTATTR_7Base>, ECLIC::ECLICCLICINTATTR_7Base, (unsigned char)0>::Set<ReadWriteMode, void>()
+                         0x800'0536   0x18  Code  Gb  main.o [1]
+void FieldValueBase<ECLIC_CLICINTIE_0_IE_Values<ECLIC::CLICINTIE_7, (unsigned int)0, (unsigned int)1, ReadWriteMode, ECLIC::ECLICCLICINTIE_7Base>, ECLIC::ECLICCLICINTIE_7Base, (unsigned char)1>::Write<ReadWriteMode, void>()
+                         0x800'0586    0xe  Code  Gb  main.o [1]
+void FieldValueBase<GPIOB_CTL_MD_Values<GPIOB::CTL0, (unsigned int)24, (unsigned int)4, ReadWriteMode, GPIOB::GPIOBCTL0Base>, GPIOB::GPIOBCTL0Base, (unsigned int)3>::Set<ReadWriteMode, void>()
+                         0x800'05e2   0x24  Code  Gb  main.o [1]
+void FieldValueBase<GPIOC_CTL_MD_Values<GPIOC::CTL0, (unsigned int)28, (unsigned int)4, ReadWriteMode, GPIOC::GPIOCCTL0Base>, GPIOC::GPIOCCTL0Base, (unsigned int)3>::Set<ReadWriteMode, void>()
+                         0x800'05ca   0x18  Code  Gb  main.o [1]
+void FieldValueBase<MACHINETIMER_MTIMECMP_MTIMECMP_Values<MACHINETIMER::MTIMECMP, (unsigned int)0, (unsigned int)64, ReadWriteMode, MACHINETIMER::MACHINETIMERBase>, MACHINETIMER::MACHINETIMERBase, (unsigned long long)2000>::Write<ReadWriteMode, void>()
+                         0x800'055e   0x16  Code  Gb  main.o [1]
+void FieldValueBase<RCU_APB2EN_PBEN_Values<RCU::APB2EN, (unsigned int)3, (unsigned int)1, ReadWriteMode, RCU::RCUAPB2ENBase>, RCU::RCUAPB2ENBase, (unsigned int)1>::Set<ReadWriteMode, void>()
+                         0x800'05b2   0x18  Code  Gb  main.o [1]
+void FieldValueBase<RCU_APB2EN_PCEN_Values<RCU::APB2EN, (unsigned int)4, (unsigned int)1, ReadWriteMode, RCU::RCUAPB2ENBase>, RCU::RCUAPB2ENBase, (unsigned int)1>::Set<ReadWriteMode, void>()
+                         0x800'059a   0x18  Code  Gb  main.o [1]
+void RegisterBase<(unsigned int)1073810444, (unsigned int)32, ReadWriteMode>::Toggle<ReadWriteMode, void>(unsigned int)
+                         0x800'0648   0x18  Code  Gb  main.o [1]
+void RegisterBase<(unsigned int)1073811468, (unsigned int)32, ReadWriteMode>::Toggle<ReadWriteMode, void>(unsigned int)
+                         0x800'06a2   0x14  Code  Gb  main.o [1]
+void RegisterBase<(unsigned int)3506438144, (unsigned int)64, ReadWriteMode>::Write<(unsigned long long)0, ReadWriteMode, void>()
+                         0x800'0574   0x12  Code  Gb  main.o [1]
+void RegisterBase<(unsigned int)3506438144, (unsigned int)64, ReadWriteMode>::Write<ReadWriteMode, void>(unsigned long long)
+                         0x800'0734    0xa  Code  Gb  main.o [1]
+void RegisterBase<(unsigned int)3523215371, (unsigned int)8, ReadWriteMode>::Write<ReadWriteMode, void>(unsigned char)
+                         0x800'052a    0xc  Code  Gb  main.o [1]
+void RegisterBase<(unsigned int)3523219487, (unsigned int)8, ReadWriteMode>::Write<(unsigned char)32, ReadWriteMode, void>()
+                         0x800'054e   0x10  Code  Gb  main.o [1]
+
+
+[1] = C:\GitHub\RiscVLib\Debug\Obj
+[2] = ccrv32imcn.a
+[3] = dbgrv32imcn.a
+[4] = dlrv32imcn.a
+
+  1'414 bytes of readonly  code memory
+    424 bytes of readonly  data memory
+  4'104 bytes of readwrite data memory
+
+Errors: none
+Warnings: none

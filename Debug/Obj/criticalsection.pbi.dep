@@ -1,0 +1,5 @@
+criticalsection.pbi: \
+  C:\GitHub\CortexLib\rtos\Source\CriticalSection\criticalsection.cpp \
+  C:\GitHub\CortexLib\rtos\Source\CriticalSection/criticalsection.hpp \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.4\riscv\inc\c\intrinsics.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.4\riscv\inc\csr.h
