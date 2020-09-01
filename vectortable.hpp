@@ -25,8 +25,9 @@ struct SystemTimer
 {
     static void HandleInterrupt()
     {
-        AppTimerService::OnSystemTick() ;
         MACHINETIMER::MTIME::Write(0U);
+        AppTimerService::OnSystemTick() ;
+
     }
 };
 

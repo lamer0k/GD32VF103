@@ -9,9 +9,9 @@
 #include "csrcustomregisters.hpp"
 #include "vectortable.hpp" //for InterruptVectorTable
 
-struct NonVectoredInt
+namespace NonVectoredInt
 {
-    static void  HandleInterrupt(std::uint32_t interruptId)
+    static void HandleInterrupt(std::uint32_t interruptId)
     {
         assert(interruptId < InterruptVectorTable.size());
         tInterruptFunction fp = InterruptVectorTable[interruptId];
@@ -21,7 +21,7 @@ struct NonVectoredInt
         }
     }
 
-    static void  HandleException(std::uint32_t exceptiontId)
+    static void HandleException(std::uint32_t exceptiontId)
     {
         assert(exceptiontId < ExceptionVectorTable.size());
         tInterruptFunction fp = ExceptionVectorTable[exceptiontId];
@@ -31,45 +31,42 @@ struct NonVectoredInt
         }
     }
 
-    static __interrupt void ExceptionEntry();
-    static __interrupt void IrqEntry();
-} ;
-
-
-__interrupt void NonVectoredInt::ExceptionEntry()
-{
-    const auto mcause = CSR::MCAUSE::Get();
-    const auto mepc = CSR::MEPC::Get();
-    const auto msubm = CSRCUSTOM::MSUBM::Get();
-    const auto exceptionCode =  mcause & 0xFFF ;
-
-    if (exceptionCode != 0xFFF) // if not NMI
+    __interrupt void ExceptionEntry()
     {
-        NonVectoredInt::HandleException(exceptionCode);
-    } else
-    {
-        DummyModule::HandleInterrupt() ; // for NMI handling
+        const auto mcause = CSR::MCAUSE::Get();
+        const auto mepc = CSR::MEPC::Get();
+        const auto msubm = CSRCUSTOM::MSUBM::Get();
+        const auto exceptionCode = mcause & 0xFFF;
+
+        if (exceptionCode != 0xFFF) // if not NMI
+        {
+            NonVectoredInt::HandleException(exceptionCode);
+        }
+        else
+        {
+            DummyModule::HandleInterrupt(); // for NMI handling
+        }
+
+        __disable_interrupt();
+        CSR::MCAUSE::Write(mcause);
+        CSR::MEPC::Write(mepc);
+        CSRCUSTOM::MSUBM::Write(msubm);
     }
 
-    __disable_interrupt();
-    CSR::MCAUSE::Write(mcause);
-    CSR::MEPC::Write(mepc);
-    CSRCUSTOM::MSUBM::Write(msubm) ;
-}
+    __interrupt void IrqEntry()
+    {
+        const auto mcause = CSR::MCAUSE::Get();
+        const auto mepc = CSR::MEPC::Get();
+        const auto msubm = CSRCUSTOM::MSUBM::Get();
+        const auto exceptionCode = mcause & 0xFFF;
 
-__interrupt void NonVectoredInt::IrqEntry()
-{
-    const auto mcause = CSR::MCAUSE::Get();
-    const auto mepc = CSR::MEPC::Get();
-    const auto msubm = CSRCUSTOM::MSUBM::Get();
-    const auto exceptionCode =  mcause & 0xFFF ;
+        NonVectoredInt::HandleInterrupt(exceptionCode);
 
-    NonVectoredInt::HandleInterrupt(exceptionCode);
-
-    __disable_interrupt();
-    CSR::MCAUSE::Write(mcause);
-    CSR::MEPC::Write(mepc);
-    CSRCUSTOM::MSUBM::Write(msubm) ;
+        __disable_interrupt();
+        CSR::MCAUSE::Write(mcause);
+        CSR::MEPC::Write(mepc);
+        CSRCUSTOM::MSUBM::Write(msubm);
+    }
 }
 
 extern "C"
@@ -96,19 +93,19 @@ int __low_level_init(void)
         // Включаем подсчет циклов и счетчика инструкций mycycle_minstret
         CSRCUSTOM::MCOUNTINHIBITPack<CSRCUSTOM::MCOUNTINHIBIT::IR::MinstretOn,
                                      CSRCUSTOM::MCOUNTINHIBIT::CY::McyclesOn
-                                    >::Set();
+        >::Set();
     }
     ECLIC::CLICCFG::NLBITS::MaxBitsForLevel3::Set();
 
     //Ставим уровень срабатывания прерывания в 0
-     ECLIC::MTH::Write(0U);
+    ECLIC::MTH::Write(0U);
     //Ставим невекторный режим для обработки прерывания таймера
-     ECLIC::CLICINTATTR_7::SHV::NonVectored::Set();
+    ECLIC::CLICINTATTR_7::SHV::NonVectored::Set();
 
     //Ставим уровень прерывания в 1, приоритет не будем трогать
     ECLIC::CLICINTCTL_7::Write<1U << (8U - ECLIC::CLICCFG::NLBITS::MaxBitsForLevel3::Value)>();
 
-    MACHINETIMER::MTIMECMP::MTIMECMPField::Value<SystemTimerPeriod>::Write() ;
+    MACHINETIMER::MTIMECMP::MTIMECMPField::Value<SystemTimerPeriod>::Write();
     MACHINETIMER::MTIME::Write<0U>();
 
     //Разрешить прерывание таймера - прерывание номер 7
@@ -117,15 +114,14 @@ int __low_level_init(void)
     //Enable machine interrupt
     CSR::MSTATUSPack<CSR::MSTATUS::MIE::InterruptEnabled>::SetValueBits();
 
-    RCU::APB2EN::PCEN::Enable::Set();
-    RCU::APB2EN::PBEN::Enable::Set();
+    RCU::APB2ENPack<RCU::APB2EN::PCEN::Enable,
+                    RCU::APB2EN::PBEN::Enable>::Set();
     GPIOC::CTL0::CTLMD7::GpioOutputPushPull50Mhz::Set();
     GPIOB::CTL0::CTLMD6::GpioOutputPushPull50Mhz::Set();
 
     return 1;
 }
 }
-
 
 int main()
 {

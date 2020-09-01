@@ -342,6 +342,7 @@
                     <state>$PROJ_DIR$\AbstractHardware\CoreRegisters</state>
                     <state>$PROJ_DIR$\IarEvalGd32Kit</state>
                     <state>$PROJ_DIR$\TimerService</state>
+                    <state>$PROJ_DIR$\AbstractHardware\Registers\CoreRegisters</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>

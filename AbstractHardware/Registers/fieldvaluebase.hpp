@@ -10,41 +10,30 @@
 #include "registerfield.hpp" //for RegisterField
 
 
-//Базовый класс для работы с битовыми полями регистров
+//Base class for FieldValue
 template<typename Field, typename Base, typename Field::Register::Type value>
 struct FieldValueBase
 {
   using RegType = typename Field::Register::Type ;
-  //Метод устанавливает значение битового поля, только в случае, если оно достпуно для записи
-  __forceinline template<typename T = typename Field::Access,
-          class = typename std::enable_if_t<std::is_base_of<ReadWriteMode, T>::value>>
+  using FieldType = typename Field::Access ;
+  //Method set new value of filed only ofr ReadWrite field
+  __forceinline template<
+      class = typename std::enable_if_t<std::is_base_of<ReadWriteMode, FieldType>::value>>
   static void Set()
   {
-    //Сохраняем текущее значение регистра
+   // static_assert(std::is_base_of<ReadWriteMode, FieldType>::value, "The method is available for ReadWrite register only") ;
+    //Read current value of the register
     RegType newRegValue = *reinterpret_cast<volatile RegType *>(Field::Register::Address) ;
-
-    //Вначале нужно очистить старое значение битового поля
+    //Clear old value of field
     newRegValue &=~ (Field::Mask << Field::Offset);
-    // Затем установить новое
+    //Set new value
     newRegValue |= (value << Field::Offset) ;
-    //И записать новое значение в регистр
+    //Write new value to the field
     *reinterpret_cast<volatile RegType *>(Field::Register::Address) = newRegValue ;
   }
 
-//  //Метод устанавливает значение битового поля, только в случае, если оно достпуно для записи
-//  __forceinline template<typename T = typename Field::Access,
-//    class = typename std::enable_if_t<std::is_base_of<ReadWriteMode, T>::value>>
-//  static void SetAtomic()
-//  {
-//    AtomicUtils<RegType>::Set(
-//      Field::Register::Address,
-//      Field::Mask,
-//      value,
-//      Field::Offset
-//      ) ;
-//  }
 
-  //Метод устанавливает значение битового поля, только в случае, если оно доступно для записи
+  //Method write the value of register. It can be
   __forceinline template<typename T = typename Field::Access,
           class = typename std::enable_if_t<std::is_base_of<WriteMode, T>::value ||
                                             std::is_base_of<ReadWriteMode, T>::value>>
@@ -52,7 +41,7 @@ struct FieldValueBase
   {
     *reinterpret_cast<volatile RegType *>(Field::Register::Address) = (value << Field::Offset) ;
   }
-  
+
   
   //Метод проверяет установлено ли значение битового поля
   __forceinline template<typename T = typename Field::Access,
