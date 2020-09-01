@@ -9,7 +9,7 @@
 #include "csrcustomregisters.hpp"
 #include "vectortable.hpp" //for InterruptVectorTable
 
-namespace NonVectoredInt
+namespace NonVectoredTrap
 {
     static void HandleInterrupt(std::uint32_t interruptId)
     {
@@ -40,7 +40,7 @@ namespace NonVectoredInt
 
         if (exceptionCode != 0xFFF) // if not NMI
         {
-            NonVectoredInt::HandleException(exceptionCode);
+            NonVectoredTrap::HandleException(exceptionCode);
         }
         else
         {
@@ -60,7 +60,7 @@ namespace NonVectoredInt
         const auto msubm = CSRCUSTOM::MSUBM::Get();
         const auto exceptionCode = mcause & 0xFFF;
 
-        NonVectoredInt::HandleInterrupt(exceptionCode);
+        NonVectoredTrap::HandleInterrupt(exceptionCode);
 
         __disable_interrupt();
         CSR::MCAUSE::Write(mcause);
@@ -83,12 +83,12 @@ int __low_level_init(void)
         // Настраиваем адрес единого обработчика прерываний.
         // Указываем, что он будет находится в регистре MTVT2
         CSRCUSTOM::MTVT2::Write(CSRCUSTOM::MTVT2::MTVT2EN::Mtvt2IsTrapAddress::Value |
-                                reinterpret_cast<std::uintptr_t>(&NonVectoredInt::IrqEntry));
+                                reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::IrqEntry));
 
         // Переключаемся на режим работы с ECLIC и устанавливаем
         // адрес единого обработчика исключений
         CSR::MTVEC::Write(CSR::MTVEC::MODE::Eclic::Value |
-                          reinterpret_cast<std::uintptr_t>(&NonVectoredInt::ExceptionEntry));
+                          reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::ExceptionEntry));
 
         // Включаем подсчет циклов и счетчика инструкций mycycle_minstret
         CSRCUSTOM::MCOUNTINHIBITPack<CSRCUSTOM::MCOUNTINHIBIT::IR::MinstretOn,

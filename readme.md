@@ -728,7 +728,7 @@ auto mstatus = CSR::MSTATUS::Get() ;
 
 Итак, вот наш общий единый обработчик всех прерываний. 
 ```cpp
-__interrupt void NonVectoredInt::IrqEntry()
+__interrupt void NonVectoredTrap::IrqEntry()
 {
   const auto mcause = CSR::MCAUSE::Get(); 
   const auto mepc = CSR::MEPC::Get(); 
@@ -736,7 +736,7 @@ __interrupt void NonVectoredInt::IrqEntry()
   //номер прерывания сохранен в mcause
   const auto exceptionCode =  mcause & 0xFFF ; 
   //вызываем обработчик нужного прерывания
-  NonVectoredInt::HandleInterrupt(exceptionCode); 
+  NonVectoredTrap::HandleInterrupt(exceptionCode); 
 
   __disable_interrupt();
   CSR::MCAUSE::Write(mcause); 
@@ -751,7 +751,7 @@ __interrupt void NonVectoredInt::IrqEntry()
 В-третьих, мы вызвали нужную нам функцию обработки прерывания в зависимости от его номера. Вот кстати, как эта функция выглядит.  
 
 ```cpp
-struct NonVectoredInt
+struct NonVectoredTrap
 {
   static void  HandleInterrupt(std::uint32_t interruptId)
   {
@@ -833,7 +833,7 @@ inline constexpr std::array<tInterruptFunction,12> ExceptionVectorTable
 };
 ```
 ```cpp
-struct NonVectoredInt
+struct NonVectoredTrap
 {    
   static void  HandleException(std::uint32_t exceptiontId)
   {
@@ -849,7 +849,7 @@ struct NonVectoredInt
 ```
 **NMI** будем обрабатывать вместе с исключениями. Зададим его номер - 0xFFF. 
 ```cpp
-__interrupt void NonVectoredInt::ExceptionEntry()
+__interrupt void NonVectoredTrap::ExceptionEntry()
 {
   const auto mcause = CSR::MCAUSE::Get();
   const auto mepc = CSR::MEPC::Get();
@@ -858,7 +858,7 @@ __interrupt void NonVectoredInt::ExceptionEntry()
   const auto exceptionCode =  mcause & 0xFFF ;
   if (exceptionCode != 0xFFF) // если не NMI
   {
-    NonVectoredInt::HandleException(exceptionCode);
+    NonVectoredTrap::HandleException(exceptionCode);
   } else
   {
     DummyModule::HandleInterrupt() ; // а это если NMI
@@ -885,7 +885,7 @@ __interrupt void NonVectoredInt::ExceptionEntry()
 // Указываем, что он будет находится в регистре MTVT2
 CSRCUSTOM::MTVT2::Write(
            CSRCUSTOM::MTVT2::MTVT2EN::Mtvt2IsTrapAddress::Value |
-           reinterpret_cast<std::uintptr_t>(&NonVectoredInt::IrqEntry));
+           reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::IrqEntry));
 ```
 
 Ну a теперь переключимся в режим работы контроллера ECLIC и укажем адрес единого обработчика исключений и NMI в регистре **mtvec**
@@ -893,7 +893,7 @@ CSRCUSTOM::MTVT2::Write(
  // Переключаемся на режим работы с ECLIC и задаем адрес единого обработчика исключений
  CSR::MTVEC::Write(
       CSR::MTVEC::MODE::Eclic::Value |
-      reinterpret_cast<std::uintptr_t>(&NonVectoredInt::ExceptionEntry));        
+      reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::ExceptionEntry));        
 ```
 
 Собственно все... контроллер и адреса обработчиков настроены. Полный код
@@ -913,12 +913,12 @@ int __low_level_init(void)
    // Указываем, что он будет находится в регистре MTVT2
    CSRCUSTOM::MTVT2::Write(
               CSRCUSTOM::MTVT2::MTVT2EN::Mtvt2IsTrapAddress::Value |
-              reinterpret_cast<std::uintptr_t>(&NonVectoredInt::IrqEntry));
+              reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::IrqEntry));
         
    // Переключаемся на режим работы с ECLIC 
    // и задаем адрес единого обработчика исключений
    CSR::MTVEC::Write(CSR::MTVEC::MODE::Eclic::Value |
-       reinterpret_cast<std::uintptr_t>(&NonVectoredInt::ExceptionEntry));
+       reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::ExceptionEntry));
         
    // Включаем подсчет циклов и счетчика инструкций mycycle_minstret
    CSRCUSTOM::MCOUNTINHIBITPack<CSRCUSTOM::MCOUNTINHIBIT::IR::MinstretOn,
@@ -976,7 +976,7 @@ GPIOB::CTL0::CTLMD6::GpioOutputPushPull50Mhz::Set();
 #include "csrcustomregisters.hpp"
 #include "vectortable.hpp" //for InterruptVectorTable
 
-struct NonVectoredInt
+struct NonVectoredTrap
 {
     static void  HandleInterrupt(std::uint32_t interruptId)
     {
@@ -1003,7 +1003,7 @@ struct NonVectoredInt
 } ;
 
 
-__interrupt void NonVectoredInt::ExceptionEntry()
+__interrupt void NonVectoredTrap::ExceptionEntry()
 {
     const auto mcause = CSR::MCAUSE::Get();
     const auto mepc = CSR::MEPC::Get();
@@ -1012,7 +1012,7 @@ __interrupt void NonVectoredInt::ExceptionEntry()
 
     if (exceptionCode != 0xFFF) // if not NMI
     {
-        NonVectoredInt::HandleException(exceptionCode);
+        NonVectoredTrap::HandleException(exceptionCode);
     } else
     {
         DummyModule::HandleInterrupt() ; // for NMI handling
@@ -1024,14 +1024,14 @@ __interrupt void NonVectoredInt::ExceptionEntry()
     CSRCUSTOM::MSUBM::Write(msubm) ; 
 }
 
-__interrupt void NonVectoredInt::IrqEntry()
+__interrupt void NonVectoredTrap::IrqEntry()
 {
     const auto mcause = CSR::MCAUSE::Get(); 
     const auto mepc = CSR::MEPC::Get(); 
     const auto msubm = CSRCUSTOM::MSUBM::Get(); 
     const auto exceptionCode =  mcause & 0xFFF ;
 
-    NonVectoredInt::HandleInterrupt(exceptionCode);
+    NonVectoredTrap::HandleInterrupt(exceptionCode);
 
     __disable_interrupt();
     CSR::MCAUSE::Write(mcause); 
@@ -1055,13 +1055,13 @@ int __low_level_init(void)
         // Указываем, что он будет находится в регистре MTVT2
         CSRCUSTOM::MTVT2::Write(
                    CSRCUSTOM::MTVT2::MTVT2EN::Mtvt2IsTrapAddress::Value |
-                   reinterpret_cast<std::uintptr_t>(&NonVectoredInt::IrqEntry));
+                   reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::IrqEntry));
 
         // Переключаемся на режим работы с ECLIC и устанавливаем 
         // адрес единого обработчика исключений
         CSR::MTVEC::Write(
                     CSR::MTVEC::MODE::Eclic::Value |
-                    reinterpret_cast<std::uintptr_t>(&NonVectoredInt::ExceptionEntry));
+                    reinterpret_cast<std::uintptr_t>(&NonVectoredTrap::ExceptionEntry));
 
         // Включаем подсчет циклов и счетчика инструкций mycycle_minstret
         CSRCUSTOM::MCOUNTINHIBITPack<CSRCUSTOM::MCOUNTINHIBIT::IR::MinstretOn,
